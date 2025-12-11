@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMI Calculator</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #e8eff5;
+        margin: 0;
+        padding: 0;
+    }
+
+    .wrapper {
+        width: 420px;
+        background: white;
+        margin: 60px auto;
+        padding: 25px 30px;
+        border-radius: 12px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+    }
+
+    h2 {
+        color: #004c6d;
+        margin-bottom: 18px;
+        font-size: 26px;
+        text-align: left;
+        border-left: 5px solid #0077a8;
+        padding-left: 10px;
+    }
+
+    .input-group {
+        margin-bottom: 18px;
+        text-align: left;
+    }
+
+    .input-group label {
+        font-size: 15px;
+        color: #444;
+        display: block;
+        margin-bottom: 6px;
+    }
+
+    .input-group input {
+        width: 92%;
+        padding: 12px;
+        font-size: 15px;
+        border: 1px solid #bbb;
+        border-radius: 6px;
+        outline: none;
+        transition: 0.2s;
+    }
+
+    .input-group input:focus {
+        border-color: #0077a8;
+    }
+
+    .error {
+        border: 1px solid red !important;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        background: #0077a8;
+        border: none;
+        color: white;
+        font-size: 17px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    button:hover {
+        background: #005c82;
+    }
+
+    #resultBox {
+        margin-top: 25px;
+        padding: 18px;
+        background: #f0f9ff;
+        border-left: 5px solid #0077a8;
+        border-radius: 6px;
+        display: none;
+        animation: fadeIn 0.4s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    #resultBox p {
+        margin: 6px 0;
+        font-size: 17px;
+        color: #333;
+    }
+
+    .category {
+        font-weight: bold;
+        font-size: 18px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+    <h2>Health BMI Calculator</h2>
+
+    <div class="input-group">
+        <label for="weight">Weight (kg)</label>
+        <input type="number" id="weight" placeholder="Example: 65">
+    </div>
+
+    <div class="input-group">
+        <label for="height">Height (cm)</label>
+        <input type="number" id="height" placeholder="Example: 170">
+    </div>
+
+    <button onclick="calculateBMI()">Calculate BMI</button>
+
+    <div id="resultBox">
+        <p id="bmiValue"></p>
+        <p class="category" id="bmiCategory"></p>
+    </div>
+
+</div>
+
+<script>
+function calculateBMI() {
+
+    let weight = document.getElementById("weight");
+    let height = document.getElementById("height");
+
+    // Remove previous error borders
+    weight.classList.remove("error");
+    height.classList.remove("error");
+
+    // Validation
+    if (weight.value === "" || height.value === "") {
+        alert("Please enter valid weight and height.");
+        if (weight.value === "") weight.classList.add("error");
+        if (height.value === "") height.classList.add("error");
+        return;
+    }
+
+    if (weight.value <= 0 || height.value <= 0) {
+        alert("Height and weight must be greater than zero.");
+        if (weight.value <= 0) weight.classList.add("error");
+        if (height.value <= 0) height.classList.add("error");
+        return;
+    }
+
+    // Convert height cm -> m
+    let h = height.value / 100;
+
+    // BMI formula
+    let bmi = weight.value / (h * h);
+    bmi = bmi.toFixed(2);
+
+    // Show result box
+    document.getElementById("resultBox").style.display = "block";
+    document.getElementById("bmiValue").innerHTML = "Your BMI: " + bmi;
+
+    let category = "";
+
+    if (bmi < 18.5) category = "Underweight";
+    else if (bmi <= 24.9) category = "Normal";
+    else if (bmi <= 29.9) category = "Overweight";
+    else category = "Obese";
+
+    document.getElementById("bmiCategory").innerHTML = "Category: " + category;
+}
+</script>
+
+</body>
+</html>
+
