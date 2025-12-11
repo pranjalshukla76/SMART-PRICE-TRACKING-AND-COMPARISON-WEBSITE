@@ -1,182 +1,340 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BMI Calculator</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Price Compare PRO</title>
 
 <style>
     body {
-        font-family: Arial, sans-serif;
-        background: #e8eff5;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+        background: #fafafa;
         margin: 0;
         padding: 0;
+        color: #333;
+        scroll-behavior: smooth;
     }
 
-    .wrapper {
-        width: 420px;
-        background: white;
-        margin: 60px auto;
-        padding: 25px 30px;
-        border-radius: 12px;
-        box-shadow: 0 3px 12px rgba(0,0,0,0.15);
-    }
-
-    h2 {
-        color: #004c6d;
-        margin-bottom: 18px;
-        font-size: 26px;
-        text-align: left;
-        border-left: 5px solid #0077a8;
-        padding-left: 10px;
-    }
-
-    .input-group {
-        margin-bottom: 18px;
-        text-align: left;
-    }
-
-    .input-group label {
-        font-size: 15px;
-        color: #444;
-        display: block;
-        margin-bottom: 6px;
-    }
-
-    .input-group input {
-        width: 92%;
-        padding: 12px;
-        font-size: 15px;
-        border: 1px solid #bbb;
-        border-radius: 6px;
-        outline: none;
-        transition: 0.2s;
-    }
-
-    .input-group input:focus {
-        border-color: #0077a8;
-    }
-
-    .error {
-        border: 1px solid red !important;
-    }
-
-    button {
-        width: 100%;
-        padding: 12px;
-        background: #0077a8;
-        border: none;
+    /* INTRO SECTION */
+    #intro {
+        height: 100vh;
+        background: linear-gradient(#ff3e6c, #ff6f91);
         color: white;
-        font-size: 17px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 40px;
+    }
+    #intro h1 { font-size: 45px; margin: 0; font-weight: 700; }
+    #intro p { font-size: 18px; margin-top: 10px; max-width: 600px; }
+    #scrollBtn {
+        margin-top: 35px;
+        background: white;
+        color: #ff3e6c;
+        padding: 12px 24px;
+        border-radius: 30px;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    /* HEADER */
+    header {
+        background: #ffffff;
+        padding: 15px 40px;
+        position: sticky;
+        top: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        z-index: 10;
+    }
+    header h2 { margin: 0; color: #ff3e6c; font-weight: 700; }
+    #searchBar {
+        width: 350px;
+        padding: 12px;
+        border-radius: 25px;
+        border: 1px solid #ccc;
+        font-size: 15px;
+        outline: none;
+    }
+
+    /* GRID FIX – KEEP HORIZONTAL PRODUCTS */
+    .container {
+        width: 95%;
+        margin: 20px auto;
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: 280px;
+        overflow-x: auto;
+        gap: 25px;
+        padding-bottom: 20px;
+    }
+    .container::-webkit-scrollbar { height: 8px; }
+    .container::-webkit-scrollbar-thumb { background:#ff3e6c; border-radius:10px; }
+
+    .product-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        transition: 0.25s;
+        min-width: 260px;
+    }
+    .product-card:hover { transform: translateY(-5px); }
+    .product-card img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+
+    .price-drop {
+        background: #e1ffd1;
+        color: #2a7a00;
+        padding: 6px 10px;
+        border-radius: 6px;
+        margin: 10px 0;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .btn-history {
+        background: #ff3e6c;
+        border: none;
+        padding: 10px 16px;
+        font-size: 14px;
+        color: white;
         border-radius: 6px;
         cursor: pointer;
-        transition: 0.2s;
+        width: 100%;
     }
 
-    button:hover {
-        background: #005c82;
-    }
-
-    #resultBox {
-        margin-top: 25px;
-        padding: 18px;
-        background: #f0f9ff;
-        border-left: 5px solid #0077a8;
-        border-radius: 6px;
+    /* MODALS */
+    #loginModal, #aboutModal {
         display: none;
-        animation: fadeIn 0.4s ease-in-out;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.6);
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
     }
 
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(8px); }
-        to { opacity: 1; transform: translateY(0); }
+    .modalBox {
+        background: white;
+        width: 350px;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        position: relative;
     }
 
-    #resultBox p {
-        margin: 6px 0;
-        font-size: 17px;
-        color: #333;
-    }
-
-    .category {
+    #closeAboutBtn, #closeLoginBtn {
+        position: absolute;
+        top: 10px;
+        right: 12px;
+        cursor: pointer;
+        font-size: 20px;
         font-weight: bold;
-        font-size: 18px;
+    }
+
+    #floatingLoginBtn,
+    #aboutBtn {
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        background: #ff3e6c;
+        color: white;
+        padding: 14px 22px;
+        border-radius: 50px;
+        font-size: 16px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+        z-index: 9999;
+    }
+    #aboutBtn { bottom: 85px; background:#333; }
+
+    /* HISTORY PAGE */
+    #historyPage { 
+        display:none; 
+        padding:40px; 
+    }
+
+    .header-box {
+        display:flex; 
+        align-items:center; 
+        gap:25px;
+    }
+
+    #historyImg {
+        width:220px !important;
+        height:220px !important;
+        border-radius:12px;
+        object-fit:cover;
+    }
+
+    #priceChart {
+        max-width:500px !important;
+        height:250px !important;
+        margin-top:20px;
     }
 </style>
 </head>
 
+
 <body>
 
-<div class="wrapper">
+<!-- INTRO -->
+<section id="intro">
+    <h1>Welcome to Price Compare PRO</h1>
+    <p>Your smart assistant that tracks prices, compares websites, and alerts you when prices drop.</p>
+    <button id="scrollBtn" onclick="scrollDown()">Start Exploring ↓</button>
+</section>
 
-    <h2>Health BMI Calculator</h2>
+<header>
+    <h2>PriceCompare</h2>
+    <input id="searchBar" type="text" placeholder="Search for a product..." />
+</header>
 
-    <div class="input-group">
-        <label for="weight">Weight (kg)</label>
-        <input type="number" id="weight" placeholder="Example: 65">
+<button id="aboutBtn">About Us</button>
+
+<!-- ABOUT US MODAL -->
+<div id="aboutModal">
+    <div class="modalBox">
+        <span id="closeAboutBtn">✖</span>
+        <h2>About Us</h2>
+        <p>
+            Price Compare PRO tracks product prices, compares websites, and shows historical price trends.
+            You save money, time, and avoid fake discounts.
+        </p>
+    </div>
+</div>
+
+<h2 style="margin-left:20px;">🔥 Recently Dropped Prices</h2>
+
+<!-- MAIN PRODUCTS -->
+<div class="container" id="mainPage">
+
+    <div class="product-card">
+        <img src="https://imgs.search.brave.com/TvHMWSGaYq9_xVrKPXdlqhpgIqnKfOwxn0lvGQJ-tbQ/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/bW9zLmNtcy5mdXR1/cmVjZG4ubmV0Lzdo/ZVRGanlhc25nNGto/WEtqVHRBM2QuanBn" />
+        <h3>XYZ Premium Smartphone</h3>
+        <div class="price-drop">Dropped ₹2,000</div>
+        <p><strong>Current Price:</strong> ₹18,999</p>
+        <button class="btn-history" onclick="showHistory('XYZ Premium Smartphone')">View Price History</button>
     </div>
 
-    <div class="input-group">
-        <label for="height">Height (cm)</label>
-        <input type="number" id="height" placeholder="Example: 170">
-    </div>
-
-    <button onclick="calculateBMI()">Calculate BMI</button>
-
-    <div id="resultBox">
-        <p id="bmiValue"></p>
-        <p class="category" id="bmiCategory"></p>
+    <div class="product-card">
+        <img src="https://imgs.search.brave.com/GL1ARSUGbGfPL9AwNRZM4yweiyGH4YAznivtX1mPeBs/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMudmVjdGVlenku/Y29tL3N5c3RlbS9y/ZXNvdXJjZXMvdGh1/bWJuYWlscy8wMzYv/NzgyLzA4NS9zbWFs/bC9haS1nZW5lcmF0/ZWQtaW5ub3ZhdGl2/ZS1zbWFydC13YXRj/aC1tb2NrdXAtZm9y/LXRlY2gtbWFya2V0/aW5nLWFpLWdlbmVy/YXRlZC1waG90by5q/cGc" />
+        <h3>Smart Watch Pro</h3>
+        <div class="price-drop">Dropped ₹750</div>
+        <p><strong>Current Price:</strong> ₹3,499</p>
+        <button class="btn-history" onclick="showHistory('Smart Watch Pro')">View Price History</button>
     </div>
 
 </div>
 
+
+<!-- PRICE HISTORY PAGE -->
+<div id="historyPage">
+    <button onclick="goBack()" style="background:#444; color:white; padding:10px 18px; border:none; border-radius:6px; cursor:pointer;">← Back</button>
+
+    <div class="header-box">
+        <img id="historyImg">
+        <h2 id="historyTitle"></h2>
+    </div>
+
+    <canvas id="priceChart"></canvas>
+</div>
+
+
+<!-- LOGIN MODAL -->
+<div id="loginModal">
+    <div class="modalBox">
+        <span id="closeLoginBtn">✖</span>
+        <h3>Login Required</h3>
+        <input id="username" type="text" placeholder="Enter Username" />
+        <input id="password" type="password" placeholder="Enter Password" />
+        <button class="btn-history" onclick="attemptLogin()">Login</button>
+    </div>
+</div>
+
+<button id="floatingLoginBtn" onclick="openLogin()">Login</button>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
-function calculateBMI() {
+let loggedIn = false;
+let pendingProduct = null;
+let chartInstance = null;
 
-    let weight = document.getElementById("weight");
-    let height = document.getElementById("height");
-
-    // Remove previous error borders
-    weight.classList.remove("error");
-    height.classList.remove("error");
-
-    // Validation
-    if (weight.value === "" || height.value === "") {
-        alert("Please enter valid weight and height.");
-        if (weight.value === "") weight.classList.add("error");
-        if (height.value === "") height.classList.add("error");
-        return;
+const priceData = {
+    "XYZ Premium Smartphone": {
+        img: "https://imgs.search.brave.com/TvHMWSGaYq9_xVrKPXdlqhpgIqnKfOwxn0lvGQJ-tbQ/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/bW9zLmNtcy5mdXR1/cmVjZG4ubmV0Lzdo/ZVRGanlhc25nNGto/WEtqVHRBM2QuanBn",
+        values:[20999,19999,19499,18999,18999,18999]
+    },
+    "Smart Watch Pro": {
+        img: "https://imgs.search.brave.com/GL1ARSUGbGfPL9AwNRZM4yweiyGH4YAznivtX1mPeBs/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMudmVjdGVlenku/Y29tL3N5c3RlbS9y/ZXNvdXJjZXMvdGh1/bWJuYWlscy8wMzYv/NzgyLzA4NS9zbWFs/bC9haS1nZW5lcmF0/ZWQtaW5ub3ZhdGl2/ZS1zbWFydC13YXRj/aC1tb2NrdXAtZm9y/LXRlY2gtbWFya2V0/aW5nLWFpLWdlbmVy/YXRlZC1waG90by5q/cGc",
+        values:[4499,4200,3900,3700,3600,3499]
     }
+};
 
-    if (weight.value <= 0 || height.value <= 0) {
-        alert("Height and weight must be greater than zero.");
-        if (weight.value <= 0) weight.classList.add("error");
-        if (height.value <= 0) height.classList.add("error");
-        return;
-    }
+function scrollDown() {
+    window.scrollTo({ top: window.innerHeight, behavior: "smooth" });
+}
 
-    // Convert height cm -> m
-    let h = height.value / 100;
+function openLogin() { loginModal.style.display = "flex"; }
+function closeLogin() { loginModal.style.display = "none"; }
+closeLoginBtn.onclick = closeLogin;
 
-    // BMI formula
-    let bmi = weight.value / (h * h);
-    bmi = bmi.toFixed(2);
+function attemptLogin() {
+    if (username.value && password.value) {
+        loggedIn = true;
+        alert("Logged in successfully!");
+        closeLogin();
+        if (pendingProduct) { showHistory(pendingProduct); pendingProduct = null; }
+    } else alert("Enter valid details");
+}
 
-    // Show result box
-    document.getElementById("resultBox").style.display = "block";
-    document.getElementById("bmiValue").innerHTML = "Your BMI: " + bmi;
+aboutBtn.onclick = () => aboutModal.style.display = "flex";
+closeAboutBtn.onclick = () => aboutModal.style.display = "none";
 
-    let category = "";
+function showHistory(productName) {
+    if (!loggedIn) { pendingProduct = productName; openLogin(); return; }
 
-    if (bmi < 18.5) category = "Underweight";
-    else if (bmi <= 24.9) category = "Normal";
-    else if (bmi <= 29.9) category = "Overweight";
-    else category = "Obese";
+    let data = priceData[productName];
 
-    document.getElementById("bmiCategory").innerHTML = "Category: " + category;
+    mainPage.style.display = "none";
+    historyPage.style.display = "block";
+
+    historyImg.src = data.img;
+    historyTitle.innerText = productName + " Price History";
+
+    let ctx = priceChart.getContext("2d");
+    if (chartInstance) chartInstance.destroy();
+
+    chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels:["M1","M2","M3","M4","M5","M6"],
+            datasets:[{ label:"Price (₹)", data:data.values, tension:0.3, borderColor:'#ff3e6c' }]
+        }
+    });
+}
+
+function goBack() {
+    historyPage.style.display = "none";
+    mainPage.style.display = "block";
 }
 </script>
 
 </body>
 </html>
-
